@@ -1,0 +1,5 @@
+﻿StationName,screen_id,date,depth_to_water_level,comment
+St@tion1,1,1996-01-02,13.87,Water Table
+Station3,1,1996-02-12,15.91,M@nu@l Me@surement
+St@tion4,1,1996-04-16,16.14,Manual Measurement
+Station5,1,1996-08-09,16.26,Water Table

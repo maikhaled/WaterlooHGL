@@ -2,7 +2,7 @@
 {
     public interface IDataRow
     {
-        public IList<IStringValue> DataItems { get; set; }
+        public IList<string> DataItems { get; set; }
         
     }
 }

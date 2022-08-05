@@ -7,14 +7,32 @@ namespace Challenge_MaiAhmed
         IDataAccess _dataAccessSource = null;
         public FrmMain()
         {
-            InitializeComponent();
-            _dataAccessSource = Factory.CreateDataAccessObj();
+            System.Threading.Thread.CurrentThread.CurrentUICulture =
+        new System.Globalization.CultureInfo("en");
             //............................................................
-            textBox1.Text = Factory.GetDataSourcePath();
-            var dataArray = _dataAccessSource.LoadKeyValueData().Select(x=> new { Key=x.Key, Value=x.Value }).OrderBy(x=>x.Value).ToArray();
-            cbxKeyValue.DataSource = dataArray;
-            cbxKeyValue.ValueMember = "Key";
-            cbxKeyValue.DisplayMember = "Value";
+            InitializeComponent();
+            LoadFormControls();
+
+        }
+
+        private void LoadFormControls()
+        {
+            try
+            {
+                _dataAccessSource = Factory.CreateDataAccessObj();
+                //............................................................
+                txtFilePath.Text = Factory.GetDataSourcePath();
+                var dataArray = _dataAccessSource.LoadKeyValueData().
+                    Select(x => new { Key = x.Key, Value = x.Value }).
+                    OrderBy(x => x.Value).ToArray();
+                cbxKeyValue.DataSource = dataArray;
+                cbxKeyValue.ValueMember = "Key";
+                cbxKeyValue.DisplayMember = "Value";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -23,25 +41,57 @@ namespace Challenge_MaiAhmed
         }
 
         private void btnLoad_Click(object sender, EventArgs e)
-        {            
-            var myData = _dataAccessSource.LoadData();
-            if (myData.Datarows.Count == 0)
-                return;
-            DataTable dt = new DataTable();
-            for (int i = 0; i < myData.Datarows[0].DataItems.Count; i++)
+        {
+            try
             {
+                var stationData = _dataAccessSource.LoadData();
+                if (stationData.Datarows.Count == 0)
+                    return;
+                DataTable stationDataTable = new DataTable();
                 if (Factory.ColumnNamesExistsInFile)
-                    dt.Columns.Add(myData.ColumnTitles[i]);
+                {
+                    for (int i = 0; i < stationData.ColumnTitles.Count; i++)
+                    {
+                        if (Factory.ColumnNamesExistsInFile)
+                            stationDataTable.Columns.Add(stationData.ColumnTitles[i]);
+                    }
+                }
                 else
-                    dt.Columns.Add($"Column {i+1}");
+                {
+                    for (int i = 0; i < stationData.Datarows[0].DataItems.Count; i++)
+                    {
+                        AddNewColumns(stationDataTable, 1);
+                    }
+                }
+                    
+                foreach (var item in stationData.Datarows)
+                {
+                    var dr = stationDataTable.NewRow();
+                    if (item.DataItems.Count > stationDataTable.Columns.Count)
+                        AddNewColumns(stationDataTable, item.DataItems.Count - stationDataTable.Columns.Count);
+                    dr.ItemArray = item.DataItems.ToArray();
+                    stationDataTable.Rows.Add(dr);
+                }
+                dgvCSVData.DataSource = stationDataTable;
             }
-            foreach (var item in myData.Datarows)
+            catch (Exception ex)
             {
-              var dr = dt.NewRow();
-                dr.ItemArray = item.DataItems.ToArray();
-                dt.Rows.Add(dr);
+                MessageBox.Show(ex.Message);
             }
-            dgvCSVData.DataSource = dt;
+
+        }
+        /// <summary>
+        /// Add missing columns if some data has extra columns more than the headers
+        /// </summary>
+        /// <param name="dataTable">Current loading DataTable</param>
+        /// <param name="columnsCount"> Number of columns needs to be added</param>
+        private void AddNewColumns(DataTable dataTable, int columnsCount)
+        {
+            int currentCount = dataTable.Columns.Count;
+            for (int i = 0; i < columnsCount; i++)
+            {
+                dataTable.Columns.Add($" Column {currentCount + i + 1}");
+            }
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -49,7 +99,7 @@ namespace Challenge_MaiAhmed
             var dlgResult = openFileDialog1.ShowDialog(this);
             if (dlgResult == DialogResult.Cancel)
                 return;
-            textBox1.Text = openFileDialog1.FileName;
+            txtFilePath.Text = openFileDialog1.FileName;
             Factory.UpdateDataSourcePath(openFileDialog1.FileName);
         }
 
@@ -57,7 +107,7 @@ namespace Challenge_MaiAhmed
         {
             if (dgvCSVData.SelectedCells.Count == 0)
                 return;
-            if(txtOldChar.Text.Length != 1 || txtNewChar.Text.Length !=1)
+            if (txtOldChar.Text.Length != 1 || txtNewChar.Text.Length != 1)
             {
                 MessageBox.Show("Please enter a character to replace in the proper fields", "Invalid Input", MessageBoxButtons.OK);
                 return;
@@ -72,6 +122,34 @@ namespace Challenge_MaiAhmed
         private void btnShowID_Click(object sender, EventArgs e)
         {
             MessageBox.Show($"Selected ID {cbxKeyValue.SelectedValue.ToString()}");
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            DataTable dt = (DataTable)dgvCSVData.DataSource;
+            List<IEnumerable<string>> list = new List<IEnumerable<string>>();
+            //.... saving the column headers.................................
+            List<string> colNames = new List<string>();
+            foreach (DataColumn col in dt.Columns)
+            {
+                colNames.Add(col.ColumnName);
+            }
+            list.Add(colNames);
+            //................................................................
+            foreach (DataRow row in dt.Rows)
+            {
+                IEnumerable<string> converted = row.ItemArray.Select(x => x.ToString() ?? "").ToArray<string>();
+                list.Add(converted);
+            }
+            var dlgresult = saveFileDialog1.ShowDialog();
+            if (dlgresult == DialogResult.OK)
+            {
+                bool isSaved = _dataAccessSource.SaveData(list, saveFileDialog1.FileName);
+                if (isSaved)
+                    MessageBox.Show("File was saved successfully");
+                else
+                    MessageBox.Show("Error! Couldn't save the file");
+            }
         }
     }
 }

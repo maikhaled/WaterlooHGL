@@ -1,12 +1,17 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace Challenge_MaiAhmed
 {
     [Serializable]
-    internal class CSVDataContainer : IDataContainer
+    internal class CSVDataContainer : IDataContainer, IListSource
     {
-        public IList<IDataRow> Datarows {get;set;}
+        public IList<IDataRow> Datarows { get; set; }
         public IList<string> ColumnTitles { get; set; }
+
+        public bool ContainsListCollection => throw new NotImplementedException();
+
         public CSVDataContainer()
         {
             Datarows = new List<IDataRow>();
@@ -19,6 +24,9 @@ namespace Challenge_MaiAhmed
             ColumnTitles = new List<string>();
         }
 
-       
+        public IList GetList()
+        {
+            return this.Datarows.ToList();
+        }
     }
 }

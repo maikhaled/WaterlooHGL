@@ -20,16 +20,7 @@ namespace Challenge_MaiAhmed
         {
             return new CSVDataAccess();
         }
-        
-        public static IStringValue CreateBindingString()
-        {
-            return new CSVStringValue();
-        }
-        public static IStringValue CreateBindingString(string value)
-        {
-            return new CSVStringValue(value);
-        }
-
+      
         internal static IDataContainer CreateDataContainerObj()
         {
             return new CSVDataContainer();

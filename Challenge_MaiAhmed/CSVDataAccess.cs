@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,7 +83,7 @@ namespace Challenge_MaiAhmed
             var rawDataItem = ReadLineToStringArray(reader);
             if (rawDataItem is null || rawDataItem.Length == 0)
                 return dataRow;
-            dataRow.DataItems = rawDataItem.Select(x => Factory.CreateBindingString(x)).ToList();
+            dataRow.DataItems = rawDataItem.ToList();
             return dataRow;
         }
         private KeyValuePair<int, string> ReadLineToKeyValue(StreamReader reader)
@@ -99,6 +100,19 @@ namespace Challenge_MaiAhmed
                 return new KeyValuePair<int, string>();
             var result = new KeyValuePair<int, string>(keyValue, dataArray[1]);
             return result;
+        }
+
+        public bool SaveData(IEnumerable<IEnumerable<string>> userData, string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath, Encoding.UTF8,new FileStreamOptions() { Mode=FileMode.OpenOrCreate, Access=FileAccess.Write}))
+            {
+                foreach (var item in userData)
+                {
+                    var saveValue = String.Join( ',', item);
+                    writer.WriteLine(saveValue);
+                }
+            }
+            return true;
         }
     }
 }
