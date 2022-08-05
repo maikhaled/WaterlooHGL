@@ -61,7 +61,7 @@ namespace Challenge_MaiAhmed {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to data.csv.
+        ///   Looks up a localized string similar to DataFiles//data.csv.
         /// </summary>
         internal static string DataFilePath {
             get {
@@ -70,7 +70,7 @@ namespace Challenge_MaiAhmed {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to combo_example.csv.
+        ///   Looks up a localized string similar to DataFiles//combo_example.csv.
         /// </summary>
         internal static string KeyValueFilePath {
             get {

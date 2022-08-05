@@ -10,7 +10,8 @@ namespace Challenge_MaiAhmed
     public static  class Factory
     {
         public static bool ColumnNamesExistsInFile { get; private set; } = true;
-
+        public static bool ColumnNamesExistsInKeyValueFile { get; private set; } = true;
+        private static string _dataSourcePath  = StaticStrings.DataFilePath;
         public  static IDataRow CreateDataObj()
         {
             return new CSVDatarow();
@@ -40,11 +41,15 @@ namespace Challenge_MaiAhmed
 
         public static string GetDataSourcePath()
         {
-            return Challenge_MaiAhmed.StaticStrings.DataFilePath;
+            return _dataSourcePath;
+        }
+        public static void UpdateDataSourcePath(string newDataSourceFilePath)
+        {
+            _dataSourcePath = newDataSourceFilePath;
         }
         public static string GetKeyValueDataFilePath()
         {
-            return Challenge_MaiAhmed.StaticStrings.DataFilePath;
+            return Challenge_MaiAhmed.StaticStrings.KeyValueFilePath;
         }
     }
 }
