@@ -93,14 +93,8 @@
   <data name="txtFilePath.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="txtFilePath.Location" type="System.Drawing.Point, System.Drawing">
-    <value>171, 17</value>
-  </data>
   <data name="txtFilePath.Size" type="System.Drawing.Size, System.Drawing">
     <value>238, 27</value>
-  </data>
-  <data name="txtFilePath.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
   </data>
   <data name="lblFilePath.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>

@@ -48,6 +48,8 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.cSVDatarowBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.bwLoadData = new System.ComponentModel.BackgroundWorker();
+            this.bwSaveData = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -175,6 +177,14 @@
             // 
             resources.ApplyResources(this.saveFileDialog1, "saveFileDialog1");
             // 
+            // bwLoadData
+            // 
+            this.bwLoadData.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            // 
+            // bwSaveData
+            // 
+            this.bwSaveData.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwSaveData_DoWork);
+            // 
             // FrmMain
             // 
             resources.ApplyResources(this, "$this");
@@ -213,5 +223,7 @@
         private Button btnShowID;
         private Button btnSave;
         private SaveFileDialog saveFileDialog1;
+        private System.ComponentModel.BackgroundWorker bwLoadData;
+        private System.ComponentModel.BackgroundWorker bwSaveData;
     }
 }

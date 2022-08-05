@@ -42,6 +42,13 @@ namespace Challenge_MaiAhmed
 
         private void btnLoad_Click(object sender, EventArgs e)
         {
+            bwLoadData.RunWorkerAsync();
+            
+
+        }
+
+        private void LoadDataFiletoDataGrid()
+        {
             try
             {
                 var stationData = _dataAccessSource.LoadData();
@@ -63,7 +70,7 @@ namespace Challenge_MaiAhmed
                         AddNewColumns(stationDataTable, 1);
                     }
                 }
-                    
+
                 foreach (var item in stationData.Datarows)
                 {
                     var dr = stationDataTable.NewRow();
@@ -78,8 +85,8 @@ namespace Challenge_MaiAhmed
             {
                 MessageBox.Show(ex.Message);
             }
-
         }
+
         /// <summary>
         /// Add missing columns if some data has extra columns more than the headers
         /// </summary>
@@ -126,6 +133,12 @@ namespace Challenge_MaiAhmed
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+           
+            SaveDataToFile();
+        }
+
+        private void SaveDataToFile()
+        {
             DataTable dt = (DataTable)dgvCSVData.DataSource;
             List<IEnumerable<string>> list = new List<IEnumerable<string>>();
             //.... saving the column headers.................................
@@ -150,6 +163,16 @@ namespace Challenge_MaiAhmed
                 else
                     MessageBox.Show("Error! Couldn't save the file");
             }
+        }
+
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            LoadDataFiletoDataGrid();
+        }
+
+        private void bwSaveData_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            SaveDataToFile();
         }
     }
 }
